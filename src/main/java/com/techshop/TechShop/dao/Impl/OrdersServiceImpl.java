@@ -155,6 +155,8 @@ private Connection connection;
 	            e.printStackTrace();
 	        }
 	    }
+	 
+	 // this methods calls internal methods to update the inventory and place the order 
 
 
 
