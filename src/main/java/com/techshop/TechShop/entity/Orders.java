@@ -1,6 +1,7 @@
 package com.techshop.TechShop.entity;
 
 import java.sql.Date;
+import java.util.List;
 
 public class Orders {
 	
@@ -8,6 +9,7 @@ public class Orders {
     private int customerID;
     private Date orderDate;
     private double totalAmount;
+    
 	public Orders() {
 		super();
 		// TODO Auto-generated constructor stub
@@ -44,7 +46,6 @@ public class Orders {
 		this.totalAmount = totalAmount;
 	}
 
-	
 	
     
     

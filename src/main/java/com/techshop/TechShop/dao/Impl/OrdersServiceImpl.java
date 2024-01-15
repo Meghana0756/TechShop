@@ -1,18 +1,27 @@
 package com.techshop.TechShop.dao.Impl;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import com.techshop.TechShop.dao.InventoryService;
+import com.techshop.TechShop.dao.OrderDetailsService;
 import com.techshop.TechShop.dao.OrdersService;
-import com.techshop.TechShop.entity.Customers;
+import com.techshop.TechShop.dao.ProductService;
+import com.techshop.TechShop.entity.OrderDetails;
 import com.techshop.TechShop.entity.Orders;
+import com.techshop.TechShop.exception.IncompleteOrderException;
+import com.techshop.TechShop.exception.PaymentFailedException;
 import com.techshop.TechShop.util.DBConnUtil;
 import com.techshop.TechShop.util.DBPropertyUtil;
-import com.techshop.TechShop.entity.OrderDetails;
 
 public class OrdersServiceImpl implements OrdersService{
+	
+	static InventoryService inventoryService = new InventoryServiceImpl();
+	static ProductService productService = new ProductServiceImpl();
+	static OrderDetailsService  orderDetailsService = new OrderDetailsServiceImpl();
 	
 private Connection connection;
 	
@@ -82,8 +91,6 @@ private Connection connection;
         }
     }
 	
-	
-	
 	 @Override
 	    public void cancelOrder(int orderId) {
 	        try (PreparedStatement preparedStatement = connection.prepareStatement(
@@ -100,4 +107,57 @@ private Connection connection;
 	            e.printStackTrace();
 	        }
 	    }
+	 
+	 public void totalamount(int productid, int quantity) {
+		 int price = productService.getprice(productid)*quantity;
+		 System.out.println("Your order amount is "+price);
+		 System.out.println("If You Want to place the order go to payment Option and Pay the Total amount" );
+		 
+	 }
+	 
+	 public void payment(int orderid, int customerid, int productid, int quantity , int amount) {
+		 
+		 int price = productService.getprice(productid)*quantity;
+		 
+		 if(price == amount) {
+			 placeOrder(orderid, customerid, productid, quantity);
+			 OrderDetails orderDetails = new OrderDetails();
+			 orderDetails.setOrderDetailID(orderid);
+			 orderDetails.setOrderID(orderid);
+			 orderDetails.setProductID(productid);
+			 orderDetails.setQuantity(quantity);
+			 orderDetailsService.insertOrderDetails(orderDetails);
+			 
+		 }else {
+			 throw new PaymentFailedException(String.format("Enter Valid details amount for Payment %d", amount ));
+		 } 
+		 
+	 }
+	 public void placeOrder(int orderid, int customerid, int productid, int quantity) {
+		  if (productid != 0 && quantity !=0) {
+	            throw new IncompleteOrderException("Plese Provide Valid Oeder Details");
+	        }
+		  int price = productService.getprice(productid)*quantity;
+	        try (PreparedStatement preparedStatement = connection.prepareStatement(
+	                "INSERT INTO orders (OrderID ,CustomerID, OrderDate, TotalAmount, ) VALUES (?, ?, ?, ?)")) {
+	        	     preparedStatement.setInt(1,orderid);
+	        	     preparedStatement.setInt(2,customerid);
+	        	     preparedStatement.setDate(3, new  Date(System.currentTimeMillis()));
+	        	     preparedStatement.setDouble(4, price);
+	            int rowsAffected = preparedStatement.executeUpdate();
+	            if (rowsAffected > 0) {
+	            	inventoryService.processOrder(productid, quantity);
+	                System.out.println("Order placed successfully.");
+	            } else {
+	                System.out.println("Failed to place order.");
+	            }
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+	    }
+
+
+
+	 
+
 }

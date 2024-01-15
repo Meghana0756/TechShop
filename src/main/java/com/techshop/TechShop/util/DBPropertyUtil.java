@@ -9,7 +9,7 @@ public class DBPropertyUtil {
         Properties properties = new Properties();
         properties.setProperty("db.url", "jdbc:mysql://localhost:3306/techshop");
         properties.setProperty("db.user", "root");
-        properties.setProperty("db.password", "");
+        properties.setProperty("db.password", "root");
         String url = properties.getProperty("db.url", "");
         String user = properties.getProperty("db.user", "");
         String password = properties.getProperty("db.password", "");

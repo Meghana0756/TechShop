@@ -9,5 +9,7 @@ public interface ProductService {
     void updateProductInfo(Products product);
 
     boolean isProductInStock(int productId);
+    
+    public int getprice(int productId);
 
 }

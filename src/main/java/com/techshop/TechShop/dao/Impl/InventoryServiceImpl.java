@@ -11,7 +11,9 @@ import com.techshop.TechShop.dao.InventoryService;
 import com.techshop.TechShop.util.DBConnUtil;
 import com.techshop.TechShop.util.DBPropertyUtil;
 import com.techshop.TechShop.entity.Inventory;
+import com.techshop.TechShop.entity.Orders;
 import com.techshop.TechShop.entity.Products;
+import com.techshop.TechShop.exception.InsufficientStockException;
 
 public class InventoryServiceImpl implements InventoryService{
 	
@@ -86,6 +88,10 @@ private Connection connection;
 	@Override
 	public void removeFromInventory(int productId, int quantity) {
 		try (PreparedStatement preparedStatement = connection.prepareStatement("UPDATE inventory SET QuantityInStock = QuantityInStock - ? WHERE productId = ?")) {
+			int currentStock = getQuantityInStock(productId);
+			if(currentStock < quantity) {
+				throw new InsufficientStockException("Insufficient stock for product ID: " +productId);
+			}
 			preparedStatement.setInt(1, quantity);
             preparedStatement.setInt(2, productId);
             int rowsAffected = preparedStatement.executeUpdate();
@@ -240,6 +246,18 @@ private Connection connection;
 	    product.setPrice(resultSet.getDouble("Price"));
 	    return product;
 	}
+	
+	
+	public void processOrder(int productId, int orderQuantity) {
+        if (isProductAvailable(productId, orderQuantity)) {
+            System.out.println("Inventory Updated Successfully..............");
+            removeFromInventory(productId, orderQuantity);
+        } else {
+        	throw new InsufficientStockException("Insufficient stock for product ID: " +productId);
+            
+        }
+    }
+
 
 	
         
