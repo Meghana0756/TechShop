@@ -104,4 +104,24 @@ private Connection connection;
 	            e.printStackTrace();
 	        }
 	    }
+	
+	 public void insertOrderDetails(OrderDetails orderDetails) {
+	        try {
+	            String sql = "INSERT INTO orderdetails (OrderDetailID,OrderID, ProductID, Quantity) VALUES (?,?, ?, ?)";
+	            try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+	            	preparedStatement.setInt(1, orderDetails.getOrderDetailID());
+	                preparedStatement.setInt(2, orderDetails.getOrderID());
+	                preparedStatement.setInt(3,orderDetails.getProductID() );
+	                preparedStatement.setInt(4, orderDetails.getQuantity());
+	                int rowsAffected = preparedStatement.executeUpdate();
+	                if (rowsAffected > 0) {
+	                    System.out.println("Order details inserted successfully.");
+	                } else {
+	                    System.out.println("Failed to insert order details.");
+	                }
+	            }
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+	    }
 }

@@ -16,7 +16,9 @@ public class OrdersMenu {
             System.out.println("2. getOrderDetails");
             System.out.println("3. updateOrderStatus");
             System.out.println("4. cancelOrder");
-            System.out.println("5. Exit");
+            System.out.println("5. totalamount");
+            System.out.println("6. payment");
+            System.out.println("7. Exit");
             System.out.print("Enetr your choice: ");
             int customerchoice = scanner.nextInt();
             switch(customerchoice) {
@@ -48,7 +50,28 @@ public class OrdersMenu {
             	int orderId3 = scanner.nextInt();
             	ordersService.cancelOrder(orderId3);
             	break;
+            	
             case 5:
+            	System.out.println("\n********** Orders Menu **********");
+            	System.out.print("Enter the Product id: ");
+            	int productid = scanner.nextInt();
+            	System.out.print("Enter the Quantity: ");
+            	int quantity = scanner.nextInt();
+            	ordersService.totalamount(productid, quantity);
+            case 6:
+            	System.out.println("\n********** Orders Menu **********");
+            	System.out.print("Enter the Order id: ");
+            	int payordid = scanner.nextInt();
+            	System.out.print("Enter the Customer id: ");
+            	int paycustid = scanner.nextInt();
+            	System.out.print("Enter the Product id: ");
+            	int payprodid = scanner.nextInt();
+            	System.out.print("Enter the Quantity: ");
+            	int payquanid = scanner.nextInt();
+            	System.out.print("Enter the Toatal Amount You are paying for the products");
+            	int totalamount = scanner.nextInt();
+            	ordersService.payment(payordid,paycustid, payprodid, payquanid, totalamount);
+            case 7:
             	System.out.println("Returning to Main Menu.");
                 return false;
             default:

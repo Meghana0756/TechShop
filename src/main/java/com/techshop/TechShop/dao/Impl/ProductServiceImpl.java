@@ -82,6 +82,24 @@ public class ProductServiceImpl implements ProductService{
         }
 		return false;
 	}
+	
+	public int getprice(int productId) {
+		try (PreparedStatement preparedStatement = connection.prepareStatement(
+                "SELECT Price FROM Products WHERE ProductID = ?")) {
+
+            preparedStatement.setInt(1, productId);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    int price = resultSet.getInt("Price");
+                    return price;
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+		return 0;
+	}
 
 
 }

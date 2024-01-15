@@ -12,6 +12,10 @@ public interface OrdersService {
 
 	double calculateTotalAmount(int orderId);
 	
+	public void totalamount(int productid, int quantity);
+	
+	public void payment(int orderid, int customerid, int productid, int quantity , int amount);
+	
 
 
 }

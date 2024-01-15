@@ -27,5 +27,7 @@ public interface InventoryService {
 	double getInventoryValue();
 
 	List<Products> listLowStockProducts();
+	
+	public void processOrder(int productId, int orderQuantity);
 
 }

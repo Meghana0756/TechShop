@@ -10,7 +10,7 @@ import java.util.List;
 import com.mysql.cj.jdbc.result.ResultSetMetaData;
 import com.techshop.TechShop.dao.CustomerService;
 import com.techshop.TechShop.entity.Customers;
-import com.techshop.TechShop.exception.CustomerNotFoundException;
+import com.techshop.TechShop.exception.InvalidDataException;
 import com.techshop.TechShop.util.DBConnUtil;
 import com.techshop.TechShop.util.DBPropertyUtil;
 
@@ -125,6 +125,9 @@ public class CustomerServiceImpl implements CustomerService{
 	public void createNewCustomer(Customers customers) {
 	    try (PreparedStatement preparedStatement = connection.prepareStatement(
 	            "INSERT INTO customers (CustomerID,FirstName, LastName, Email, Phone, Address) VALUES (?,?, ?, ?, ?, ?)")) {
+	    	if(!isValidEmail(customers.getEmail())) {
+	    		throw new InvalidDataException(String.format("The Email you Enter is Invalid :%s", customers.getEmail()));	
+	    	}
             preparedStatement.setInt(1, customers.getCustomerID());
 	        preparedStatement.setString(2, customers.getFirstName());
 	        preparedStatement.setString(3, customers.getLastName());
@@ -144,6 +147,12 @@ public class CustomerServiceImpl implements CustomerService{
 	        e.printStackTrace();
 	    }
 	}
+	
+	public static boolean isValidEmail(String email) {
+        // Implement your email validation logic here
+        // For simplicity, this example assumes a basic email format check
+        return email.matches("^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$");
+    }
 
 	
 	
